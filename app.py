@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
+import pandas as pd
 
 st.set_page_config(page_title="Laptop Price Predictor", page_icon="💻", layout="wide")
 
@@ -21,7 +22,7 @@ st.markdown(
 # Import model and data
 st.title("Laptop Price Predictor 💻")
 pipe = pickle.load(open("pipe.pkl", "rb"))
-df = pickle.load(open("df.pkl", "rb"))
+df = pd.read_parquet('df.parquet', engine='pyarrow')
 
 # Define placeholders
 placeholders = {
@@ -77,14 +78,7 @@ with right_column:
     ssd = st.selectbox("SSD(in GB)", ["Select SSD"] + [128, 256, 512, 1024], key="ssd")
 
 gpu = st.selectbox("GPU Brand", ["Select GPU"] + list(df["GPU brand"].unique()), key="gpu")
-
-# Update OS options based on selected brand
-if company == "Apple":
-    os = st.selectbox("OS Type", ["MAC"], key="os")
-elif company != "Select a brand":
-    os = st.selectbox("OS Type", ["Select OS"] + list(df["OS"].unique()), key="os")
-else:
-    os = st.selectbox("OS Type", ["Select OS"], key="os")
+os = st.selectbox("OS Type", ["Select OS"] + list(df["OS"].unique()), key="os")
 
 # Define a function to display error messages
 def display_error(message):
